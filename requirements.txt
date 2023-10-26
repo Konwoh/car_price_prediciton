@@ -7,4 +7,3 @@ seaborn==0.11.2
 streamlit==1.27.2
 streamlit_option_menu==0.3.6
 tensorflow==2.13.0
-tensorflow_intel==2.13.0
