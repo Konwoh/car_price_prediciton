@@ -8,3 +8,4 @@ seaborn
 streamlit
 streamlit_option_menu
 tensorflow
+protobuf==3.20.*
