@@ -1,0 +1,10 @@
+joblib
+matplotlib
+memory_profiler
+numpy
+pandas
+scikit_learn
+seaborn
+streamlit
+streamlit_option_menu
+tensorflow
