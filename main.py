@@ -10,7 +10,7 @@ from memory_profiler import profile
 loaded_model_lr = pickle.load(open("models/lr_model.pkl", "rb"))
 loaded_model_lasso = pickle.load(open("models/lasso_model.pkl", "rb"))
 loaded_column_transf = pickle.load(open("transformer_models/column_transf.pkl", "rb"))
-#loaded_model_nn = keras.models.load_model("nn_model.keras")
+loaded_model_nn = keras.models.load_model("nn_model.keras")
 loaded_model_rrf = pickle.load(open("models/rrf.pkl", "rb"))
 loaded_rrf_pca = joblib.load(open("models/rrf_pca_model.pkl", "rb"))
 loaded_pca = joblib.load(open("transformer_models/pca_transformer.pkl", "rb"))
@@ -31,8 +31,8 @@ def auto_price_predicition(input_data, model):
         return loaded_model_lr.predict(input_pre)
     elif model == "Lasso Regression":
         return loaded_model_lasso.predict(input_pre)
-    #elif model == "Neural Network":
-    #    return loaded_model_nn.predict(input_pre)
+    elif model == "Neural Network":
+        return loaded_model_nn.predict(input_pre)
     elif model == "Random Forest Regressor":
         return loaded_model_rrf.predict(input_pre)
     elif model == "Random Forest Regressor mit PCA":
@@ -59,7 +59,7 @@ def prediction():
                          
     model_selection = st.selectbox("Which model would you like to predict the price?",
                                    ("Linear Regression", "Lasso Regression", "Random Forest Regressor", "Gradient Boosting Regressor",
-                                    "AdaBoost Regressor"), key="model_selection")
+                                    "AdaBoost Regressor", "Neural Network"), key="model_selection")
     print(input_data)
     if st.button("Show Car Price Result"):
         price_result = auto_price_predicition(input_data, model_selection)
