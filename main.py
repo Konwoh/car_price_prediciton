@@ -12,15 +12,12 @@ from memory_profiler import profile
 loaded_model_lr = pickle.load(open("models/lr_model.pkl", "rb"))
 loaded_model_lasso = pickle.load(open("models/lasso_model.pkl", "rb"))
 loaded_column_transf = pickle.load(open("transformer_models/column_transf.pkl", "rb"))
-loaded_model_nn = pickle.load(open("models/nn_model.pkl", "rb"))
+#loaded_model_nn = pickle.load(open("models/nn_model.pkl", "rb"))
 loaded_model_rrf = pickle.load(open("models/rrf.pkl", "rb"))
 loaded_rrf_pca = joblib.load(open("models/rrf_pca_model.pkl", "rb"))
 loaded_pca = joblib.load(open("transformer_models/pca_transformer.pkl", "rb"))
 loaded_gbr = joblib.load(open("models/gbr_model.pkl", "rb"))
 loaded_abr = joblib.load(open("models/abr_model.pkl", "rb"))
-
-#print(loaded_rrf_pca)
-print(loaded_model_rrf)
 
 columns = ["reg_year", "runned_miles", "engine_power", "width", "length", "average_mpg", "seat_num", "door_num", "maker", "genmodel", "color", "bodytype", "gearbox", "fuel_type"]
 
@@ -36,8 +33,8 @@ def auto_price_predicition(input_data, model):
         return loaded_model_lr.predict(input_pre)
     elif model == "Lasso Regression":
         return loaded_model_lasso.predict(input_pre)
-    elif model == "Neural Network":
-        return loaded_model_nn.predict(input_pre)
+    #elif model == "Neural Network":
+    #    return loaded_model_nn.predict(input_pre)
     elif model == "Random Forest Regressor":
         return loaded_model_rrf.predict(input_pre)
     elif model == "Random Forest Regressor mit PCA":
