@@ -3,16 +3,14 @@ import joblib
 import pandas as pd
 import streamlit as st
 #from data_fitting import prediciton_preprocessing
-import numpy as np
-import matplotlib.pyplot as plt
 from streamlit_option_menu import option_menu
-import seaborn as sns
-
+from tensorflow import keras
+from memory_profiler import profile
 #laden der trainerten Modelle
 loaded_model_lr = pickle.load(open("models/lr_model.pkl", "rb"))
 loaded_model_lasso = pickle.load(open("models/lasso_model.pkl", "rb"))
 loaded_column_transf = pickle.load(open("transformer_models/column_transf.pkl", "rb"))
-loaded_model_nn = pickle.load(open("models/nn_model.pkl", "rb"))
+loaded_model_nn = keras.models.load_model("nn_model.keras")
 loaded_model_rrf = pickle.load(open("models/rrf.pkl", "rb"))
 loaded_rrf_pca = joblib.load(open("models/rrf_pca_model.pkl", "rb"))
 loaded_pca = joblib.load(open("transformer_models/pca_transformer.pkl", "rb"))
@@ -69,7 +67,7 @@ def prediction():
             st.markdown(f"### :green[Der geschätze Preis beträgt: {str(round(price_result[0],2))} $]")
         else:
             st.markdown(f"### :green[Der geschätze Preis beträgt: {str(round(price_result[0][0], 2))} $]")
-
+@profile
 def main():
     st.set_page_config(layout="wide")
     with st.sidebar:
