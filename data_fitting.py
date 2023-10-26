@@ -3,7 +3,7 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import StandardScaler
 import pandas as pd 
-
+import pickle
 df_prediction = pd.read_csv("data/df_preprocessed.csv")
 
 cat_cols = df_prediction.select_dtypes("object").columns # Auswahl aller kategorischen Spalten 
@@ -23,6 +23,8 @@ y = df_prediction["price"]
 
 x_pre = prediciton_preprocessing.fit_transform(x)
 
+pickle_column_transf= pickle.dump(prediciton_preprocessing, open("column_transf.pkl", "wb"))
+
 all_column_names = list(prediciton_preprocessing.named_transformers_['scaler'].get_feature_names_out(input_features=cols_without_price)) \
 + list(prediciton_preprocessing.named_transformers_['encoder'].get_feature_names_out(input_features=cat_cols)) + ["reg_year"]
 
@@ -40,6 +42,8 @@ from sklearn.decomposition import PCA
 pca = PCA(n_components=20)
 
 pca.fit(x_train_pca)
+
+pickle.dump(pca, open("pca_transformer.pkl", "wb"))
 
 x_train_pca = pca.transform(x_train_pca)
 x_test_pca = pca.transform(x_test_pca)

@@ -91,4 +91,4 @@ for i in cat_cols:
 
 df_new.drop(columns=["name"], axis=1).to_csv("data/df_preprocessed.csv", index=False)
 
-print("ready data_preparation")
+print("ready data_fitting")

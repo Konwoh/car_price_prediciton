@@ -2,67 +2,66 @@ import pickle
 import joblib
 import pandas as pd
 import streamlit as st
-#from data_preparation import prediciton_preprocessing
+#from data_fitting import prediciton_preprocessing
 import numpy as np
 import matplotlib.pyplot as plt
 from streamlit_option_menu import option_menu
-import data_fitting
 import seaborn as sns
-
+from memory_profiler import profile
 #laden der trainerten Modelle
 loaded_model_lr = pickle.load(open("models/lr_model.pkl", "rb"))
 loaded_model_lasso = pickle.load(open("models/lasso_model.pkl", "rb"))
-loaded_model_rrf = joblib.load(open("models/rrf.joblib", "rb"))
-loaded_model_gbr = pickle.load(open("models/gbr_model.pkl", "rb"))
-loaded_model_abr = pickle.load(open("models/abr_model.pkl", "rb"))
+loaded_column_transf = pickle.load(open("column_transf.pkl", "rb"))
 loaded_model_nn = pickle.load(open("models/nn_model.pkl", "rb"))
+loaded_model_rrf = pickle.load(open("models/rrf.pkl", "rb"))
+loaded_rrf_pca = joblib.load(open("models/rrf_pca_model.pkl", "rb"))
+loaded_pca = joblib.load(open("pca_transformer.pkl", "rb"))
+loaded_gbr = joblib.load(open("models/gbr_model.pkl", "rb"))
+loaded_abr = joblib.load(open("models/abr_model.pkl", "rb"))
 
-#laden der Datensätze
-df_begin = pd.read_csv("data/Ad_table (extra).csv") #Ursprügnlciher datensatz
-df = pd.read_csv("data/df_preprocessed.csv") #vorgefertigeter Datensatz (Resultat von data_preparation.py)
+#print(loaded_rrf_pca)
+print(loaded_model_rrf)
 
-num_cols = df.select_dtypes(["float64", "int64"]).columns #Numerische Attribute des Datensatzes
-cat_cols = df.select_dtypes(["object"]).columns #Kategorische Attribute des Datensatzes
+columns = ["reg_year", "runned_miles", "engine_power", "width", "length", "average_mpg", "seat_num", "door_num", "maker", "genmodel", "color", "bodytype", "gearbox", "fuel_type"]
 
 def auto_price_predicition(input_data, model):
     df_test = pd.DataFrame(list(input_data.values())).T
-    df_test.columns = df.drop(columns="price").columns
-    input_pre = data_fitting.prediciton_preprocessing.transform(df_test)
-    
+    df_test.columns = columns
+    input_pre = loaded_column_transf.transform(df_test)
+    all_column_names = list(loaded_column_transf.named_transformers_['scaler'].get_feature_names_out()) \
+    + list(loaded_column_transf.named_transformers_['encoder'].get_feature_names_out()) + ["reg_year"]
+    df_prediction2 = pd.DataFrame(input_pre.toarray(), columns=all_column_names)
+    input_pre_pca = loaded_pca.transform(df_prediction2)
     if model == "Linear Regression":
         return loaded_model_lr.predict(input_pre)
     elif model == "Lasso Regression":
         return loaded_model_lasso.predict(input_pre)
-    elif model == "Random Forest Regressor":
-        return loaded_model_rrf.predict(input_pre)
-    elif model == "Gradient Boosting Regressor":
-        return loaded_model_gbr.predict(input_pre)
-    elif model == "AdaBoost Regressor":
-        return loaded_model_abr.predict(input_pre)
     elif model == "Neural Network":
         return loaded_model_nn.predict(input_pre)
-
+    elif model == "Random Forest Regressor":
+        return loaded_model_rrf.predict(input_pre)
+    elif model == "Random Forest Regressor mit PCA":
+        return loaded_rrf_pca.predict(input_pre_pca)
+    elif model == "Gradient Boosting Regressor":
+        return loaded_gbr.predict(input_pre)
+    elif model == "AdaBoost Regressor":
+        return loaded_abr.predict(input_pre)
+    
 def prediction():
-    df_pred = df.drop(columns="price")
-    columns = list(df_pred.dtypes.index)
-    dtype = df_pred.dtypes
     input_data = {}
     
-    # Definieren Sie Ihre Spalten in Gruppen, um sie in drei Spalten anzuzeigen
     column_groups = [columns[:5], columns[5:10], columns[10:]]
     col1, col2, col3 = st.columns(3)
-    
+
     for group in column_groups:
         for column in group:
             i = columns.index(column)
             with col1 if i < 5 else col2 if i < 10 else col3:
-                if dtype[column] == "object":
-                    input_data[column] = st.text_input(f"Please insert: {column}")
-                elif dtype[column] == "int64":
-                    input_data[column] = st.number_input(f"Please insert: {column}")
+                if i < 8:
+                    input_data[column] = st.number_input(f"Please insert: {column}") 
                 else:
-                    input_data[column] = st.number_input(f"Please insert: {column}")
-
+                    input_data[column] = st.text_input(f"Please insert: {column}")    
+                         
     model_selection = st.selectbox("Which model would you like to predict the price?",
                                    ("Linear Regression", "Lasso Regression", "Random Forest Regressor", "Gradient Boosting Regressor",
                                     "AdaBoost Regressor", "Neural Network"), key="model_selection")
@@ -73,8 +72,7 @@ def prediction():
             st.markdown(f"### :green[Der geschätze Preis beträgt: {str(round(price_result[0],2))} $]")
         else:
             st.markdown(f"### :green[Der geschätze Preis beträgt: {str(round(price_result[0][0], 2))} $]")
-
-
+@profile
 def main():
     st.set_page_config(layout="wide")
     with st.sidebar:
@@ -131,95 +129,6 @@ https://figshare.com/articles/figure/DVM-CAR_Dataset/19586296/2""")
     - Kraftstoffart (Fuel type)
     - Farbe (Color)""")
         
-        ## Erste Visualisierung
-        st.subheader("Deskriptive Datenanalyse")
-        fig1, ax01 = plt.subplots(figsize=(6,2))
-        (df_begin.isna().sum()/df_begin.shape[0]).sort_values(ascending=False).plot(kind="bar")
-        plt.title("Prozentualer Anteil an Null-Werten der verschiedenen Attribute des Datensatzes", fontsize=7)
-        plt.xlabel("Attribute Datensatz", fontsize=6)
-        plt.ylabel("Prozent", fontsize=6)
-        ax01.tick_params(axis='both', labelsize=5)
-        st.pyplot(fig1, use_container_width=False)
-        
-        ## Zweite Visualisierung
-        fig2, ax02 = plt.subplots(figsize=(6,3))
-        sns.heatmap(df_begin.corr(), annot=True, annot_kws={"fontsize":6}, cbar=False)
-        plt.title("Korrelations-Heatmap", fontsize=7)
-        ax02.tick_params(axis='both', labelsize=5)
-        st.pyplot(fig2, use_container_width=False)
-        
-        ## Dritte Visualisierung
-        st.markdown("#### Verteilung aller numerischer Datenwerte")
-        fig3, ((ax1, ax2, ax3), (ax4, ax5, ax6), (ax7, ax8, ax9)) = plt.subplots(3, 3, figsize=(10,7))
-        axes = [ax1,ax2,ax3,ax4,ax5,ax6,ax7,ax8,ax9]
-        fig3.suptitle('Verteilung aller numerischen Datenwerte')
-        for col, ax in zip(num_cols, axes):
-            ax.hist(df[col], bins=100)
-            ax.set_title(col, fontsize=5)
-            ax.tick_params(axis='both', labelsize=5)
-        st.pyplot(fig3, use_container_width=False)
-        
-        ##Vierte Visualisierung
-        fig4, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2,2, figsize=(12,12))
-        axes2 = [ax1, ax2, ax3, ax4]
-        for cat, ax in zip(cat_cols[2:], axes2):
-            sns.countplot(data = df,x= cat, ax=ax)
-            ax.tick_params(axis='x', labelrotation=60, labelsize=6)
-            ax.tick_params(axis='y', labelsize=6)
-            ax.set_ylabel(ax.get_ylabel(), fontsize=6)
-        st.pyplot(fig4, use_container_width=False)
-        
-        ##Fünfte Visualisierung  
-        st.markdown("#### Anzahl Autos pro Hersteller im Datensatz:")
-        fig5, ax11 = plt.subplots(figsize=(6,2))
-        df.maker.value_counts().plot(kind="bar")
-        plt.title("Anzahl Autos pro Hersteller im Datensatz", fontsize=7)
-        plt.xlabel("Hersteller", fontsize=6)
-        plt.xticks(fontsize=6)
-        plt.ylabel("Anzahl Autos", fontsize=6)
-        plt.yticks(fontsize=6)
-        st.pyplot(fig5, use_container_width=False)
-        
-        ##Sechste Visualisierung      
-        st.markdown("#### Durchschnittlicher Preis je Hersteller")
-        mean_maker = df.groupby(by=["maker"])["price"].mean().sort_values(ascending=False)
-        fig6, ax12 = plt.subplots(figsize=(6,2))
-        (mean_maker[mean_maker < 1000000]).plot(kind="bar")
-        plt.title("Durchschnittlicher Preis je Hersteller(Auswahl)", fontsize=7)
-        plt.xlabel("Hersteller", fontsize=7)
-        plt.xticks(fontsize=6)
-        plt.ylabel("Preis", fontsize=7)
-        plt.yticks(fontsize=6)
-        st.pyplot(fig6, use_container_width=False) 
-          
-        ##Siebte Visualisierung
-        df_maker = df[df["maker"].isin(list(df["maker"].value_counts().head().index))]
-        df_maker = df_maker[df_maker["bodytype"].isin(["Saloon", "Convertible", "SUV", "Estate", "Coupe", "Hatchback"])]
-        plot_test = df_maker.groupby(by=["reg_year", "maker"])["price"].mean()
-        plot_test_df = pd.DataFrame(plot_test).reset_index()
-        plot_test_df = plot_test_df[plot_test_df.reg_year > 1990]
-        fig7, ax13 = plt.subplots(figsize=(6,4))
-        sns.lineplot(x=plot_test_df["reg_year"], y=plot_test_df["price"], hue=plot_test_df["maker"])
-        plt.legend(fontsize=6)
-        plt.xticks(fontsize=6)
-        plt.xlabel("Zulassungsjahr", fontsize=6)
-        plt.ylabel("Preis", fontsize=6)
-        plt.yticks(fontsize=6)
-        plt.title("Durchschnittlicher Preis der größten Hersteller über Zeit", fontsize=7)
-        st.pyplot(fig7, use_container_width=False)
-        
-        ## Achte Visualisierung
-        scatter_df = df.groupby(by=["maker", "genmodel"])[["runned_miles", "price"]].mean().reset_index()
-        filtered = scatter_df[(scatter_df["price"] < 100000) & (scatter_df["runned_miles"] < 400000) & (scatter_df["maker"].isin(scatter_df["maker"].value_counts().head().index))]     
-        fig8, ax14 = plt.subplots(figsize=(6,4))
-        sns.scatterplot(data=filtered, y="price", x="runned_miles", hue="maker")
-        plt.title("Verhältnis Laufleistung und Preis der größten Hersteller", fontsize=7)
-        plt.xlabel("Laufleistung", fontsize=6)
-        plt.ylabel("Preis", fontsize=6)
-        plt.xticks(fontsize=6)
-        plt.yticks(fontsize=6)
-        plt.legend(fontsize=6)
-        st.pyplot(fig8, use_container_width=False)
         
     if (selected == "Vorhersage des Auto Preis"):
         st.title("Vorhersage des Auto Preis")

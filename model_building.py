@@ -1,4 +1,4 @@
-import data_preparation
+import data_fitting
 from sklearn.model_selection import GridSearchCV
 from sklearn.linear_model import Lasso, LinearRegression
 from sklearn.ensemble import RandomForestRegressor
@@ -6,7 +6,7 @@ from tensorflow import keras
 from sklearn.metrics import r2_score, mean_absolute_error
 
 nn_model = keras.Sequential()
-nn_model.add(keras.layers.Input(shape=(data_preparation.x_train.shape[1]),))
+nn_model.add(keras.layers.Input(shape=(data_fitting.x_train.shape[1]),))
 nn_model.add(keras.layers.Dense(units=200, activation='relu', kernel_initializer="normal"))
 nn_model.add(keras.layers.Dropout(rate=0.15))
 nn_model.add(keras.layers.Dense(units=100, activation='relu', kernel_initializer="normal"))
@@ -20,7 +20,7 @@ opt = keras.optimizers.Adam(learning_rate=0.0001)
 
 nn_model.compile(loss=keras.losses.MeanSquaredError(), optimizer=opt, metrics=["mae"])
 
-history = nn_model.fit(data_preparation.x_train, data_preparation.y_train, epochs=100, validation_split=0.25, callbacks= [callback])
+history = nn_model.fit(data_fitting.x_train, data_fitting.y_train, epochs=100, validation_split=0.25, callbacks= [callback])
 
 #nn_model.evaluate(x_test, y_test)
 
@@ -28,8 +28,8 @@ linear_reg = LinearRegression()
 linear_reg_pca = LinearRegression()
 lasso_reg = Lasso(alpha=0.5)
 lasso_reg_pca = Lasso(alpha=0.5)
-rrf = RandomForestRegressor(n_estimators=150, n_jobs=-1, verbose=2)
-rrf_pca = RandomForestRegressor(n_estimators=150, n_jobs=-1, verbose=2)
+rrf = RandomForestRegressor(n_estimators=200, n_jobs=-1, verbose=2, max_depth=10)
+rrf_pca = RandomForestRegressor(n_estimators=200, n_jobs=-1, verbose=2, max_depth=15)
 
 #lasso_grid = {"alpha": [0.5, 1, 1.5]}
 #rrf_grid = {"n_estimators" : [100],
@@ -42,25 +42,25 @@ rrf_pca = RandomForestRegressor(n_estimators=150, n_jobs=-1, verbose=2)
 #grids = [lasso_grid_search, rrf_grid_search]
 
 #Linear Regression
-linear_reg.fit(data_preparation.x_train, data_preparation.y_train)
-linear_reg.score(data_preparation.x_test, data_preparation.y_test)
+linear_reg.fit(data_fitting.x_train, data_fitting.y_train)
+linear_reg.score(data_fitting.x_test, data_fitting.y_test)
 
-linear_reg_pca.fit(data_preparation.x_train_pca, data_preparation.y_train)
-linear_reg_pca.score(data_preparation.x_test_pca, data_preparation.y_test)
+linear_reg_pca.fit(data_fitting.x_train_pca, data_fitting.y_train)
+linear_reg_pca.score(data_fitting.x_test_pca, data_fitting.y_test)
 
 #Lasso Regression
-lasso_reg.fit(data_preparation.x_train, data_preparation.y_train)
-lasso_reg.score(data_preparation.x_test, data_preparation.y_test)
+lasso_reg.fit(data_fitting.x_train, data_fitting.y_train)
+lasso_reg.score(data_fitting.x_test, data_fitting.y_test)
 
-lasso_reg_pca.fit(data_preparation.x_train_pca, data_preparation.y_train)
-lasso_reg_pca.score(data_preparation.x_test_pca, data_preparation.y_test)
+lasso_reg_pca.fit(data_fitting.x_train_pca, data_fitting.y_train)
+lasso_reg_pca.score(data_fitting.x_test_pca, data_fitting.y_test)
 
 ##Random Forrest Regressor
-rrf.fit(data_preparation.x_train, data_preparation.y_train)
-rrf.score(data_preparation.x_test, data_preparation.y_test)
+rrf.fit(data_fitting.x_train, data_fitting.y_train)
+rrf.score(data_fitting.x_test, data_fitting.y_test)
 
-rrf_pca.fit(data_preparation.x_train_pca, data_preparation.y_train)
-rrf_pca.score(data_preparation.x_test_pca, data_preparation.y_test)
+rrf_pca.fit(data_fitting.x_train_pca, data_fitting.y_train)
+rrf_pca.score(data_fitting.x_test_pca, data_fitting.y_test)
 
 from sklearn.ensemble import GradientBoostingRegressor, AdaBoostRegressor
 
@@ -70,40 +70,41 @@ abr = AdaBoostRegressor(n_estimators=200)
 abr_pca = AdaBoostRegressor(n_estimators=200)
 
 #Gradient Bossting Regression
-gbr.fit(data_preparation.x_train, data_preparation.y_train)
-gbr.score(data_preparation.x_test, data_preparation.y_test)
+gbr.fit(data_fitting.x_train, data_fitting.y_train)
+gbr.score(data_fitting.x_test, data_fitting.y_test)
 
-gbr_pca.fit(data_preparation.x_train_pca, data_preparation.y_train)
-gbr_pca.score(data_preparation.x_test_pca, data_preparation.y_test)
+gbr_pca.fit(data_fitting.x_train_pca, data_fitting.y_train)
+gbr_pca.score(data_fitting.x_test_pca, data_fitting.y_test)
 
 #AdaBoost Regression
-abr.fit(data_preparation.x_train, data_preparation.y_train)
-abr.score(data_preparation.x_test, data_preparation.y_test)
+abr.fit(data_fitting.x_train, data_fitting.y_train)
+abr.score(data_fitting.x_test, data_fitting.y_test)
 
-abr_pca.fit(data_preparation.x_train_pca, data_preparation.y_train)
-abr_pca.score(data_preparation.x_test_pca, data_preparation.y_test)
+abr_pca.fit(data_fitting.x_train_pca, data_fitting.y_train)
+abr_pca.score(data_fitting.x_test_pca, data_fitting.y_test)
 
 print("Model Scores mit normalen Datensatz:")
-print(f"Linear Regression {linear_reg.score(data_preparation.x_test, data_preparation.y_test)}")
-print(f"Lasso Regression: {lasso_reg.score(data_preparation.x_test, data_preparation.y_test)}")
-print(f"Random Forest Regressor: {rrf.score(data_preparation.x_test, data_preparation.y_test)}")
-print(f"Gradient Boosting Regressor {gbr.score(data_preparation.x_test, data_preparation.y_test)}")
-print(f"AdaBoost Regressor: {abr.score(data_preparation.x_test, data_preparation.y_test)}")
+print(f"Linear Regression {linear_reg.score(data_fitting.x_test, data_fitting.y_test)}")
+print(f"Lasso Regression: {lasso_reg.score(data_fitting.x_test, data_fitting.y_test)}")
+print(f"Random Forest Regressor: {rrf.score(data_fitting.x_test, data_fitting.y_test)}")
+print(f"Gradient Boosting Regressor {gbr.score(data_fitting.x_test, data_fitting.y_test)}")
+print(f"AdaBoost Regressor: {abr.score(data_fitting.x_test, data_fitting.y_test)}")
 
 print("Model Scores mit PCA reduzierten Datensatz:")
-print(f"Linear Regression {linear_reg_pca.score(data_preparation.x_test_pca, data_preparation.y_test)}")
-print(f"Lasso Regression: {lasso_reg_pca.score(data_preparation.x_test_pca, data_preparation.y_test)}")
-print(f"Random Forest Regressor: {rrf_pca.score(data_preparation.x_test_pca, data_preparation.y_test)}")
-print(f"Gradient Boosting Regressor {gbr_pca.score(data_preparation.x_test_pca, data_preparation.y_test)}")
-print(f"AdaBoost Regressor: {abr_pca.score(data_preparation.x_test_pca, data_preparation.y_test)}")
+print(f"Linear Regression {linear_reg_pca.score(data_fitting.x_test_pca, data_fitting.y_test)}")
+print(f"Lasso Regression: {lasso_reg_pca.score(data_fitting.x_test_pca, data_fitting.y_test)}")
+print(f"Random Forest Regressor: {rrf_pca.score(data_fitting.x_test_pca, data_fitting.y_test)}")
+print(f"Gradient Boosting Regressor {gbr_pca.score(data_fitting.x_test_pca, data_fitting.y_test)}")
+print(f"AdaBoost Regressor: {abr_pca.score(data_fitting.x_test_pca, data_fitting.y_test)}")
 
 import pickle
 
-pickle_out_lr= pickle.dump(linear_reg, open("lr_model.pkl", "wb"))
-pickle_out_lasso = pickle.dump(lasso_reg, open("lasso_model.pkl", "wb"))
-pickle_out__rrf = pickle.dump(rrf, open("rrf_model.pkl", "wb"))
-pickle_out_gbr = pickle.dump(gbr, open("gbr_model.pkl", "wb"))
-pickle_out_abr = pickle.dump(abr, open("abr_model.pkl", "wb"))
-pickle_out_nn = pickle.dump(nn_model, open("nn_model.pkl", "wb"))
+pickle_out_lr= pickle.dump(linear_reg, open("models/lr_model.pkl", "wb"))
+pickle_out_lasso = pickle.dump(lasso_reg, open("models/lasso_model.pkl", "wb"))
+pickle_out__rrf_pca = pickle.dump(rrf_pca, open("models/rrf_pca_model.pkl", "wb"))
+pickle_out__rrf_pca = pickle.dump(rrf, open("models/rrf_pca_model.pkl", "wb"))
+pickle_out_gbr = pickle.dump(gbr, open("models/gbr_model.pkl", "wb"))
+pickle_out_abr = pickle.dump(abr, open("models/abr_model.pkl", "wb"))
+pickle_out_nn = pickle.dump(nn_model, open("models/nn_model.pkl", "wb"))
 
 print("ready model_bulding")
