@@ -3,13 +3,12 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.linear_model import Lasso, LinearRegression
 from sklearn.ensemble import RandomForestRegressor
 from tensorflow import keras
+from sklearn.metrics import r2_score, mean_absolute_error
 from nn_model import nn_model
 
 nn_model = nn_model()
-
-callback = keras.callbacks.EarlyStopping(monitor='val_mae', patience=10, verbose=1, min_delta=4, mode="min")
-
 nn_model.compile_model()
+callback = keras.callbacks.EarlyStopping(monitor='val_mae', patience=10, verbose=1, min_delta=4, mode="min")
 
 history = nn_model.fit(data_fitting.x_train, data_fitting.y_train, epochs=100, validation_split=0.25, callbacks= [callback])
 

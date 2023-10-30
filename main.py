@@ -1,13 +1,9 @@
 import pickle
-import joblib
 import pandas as pd
 import streamlit as st
 #from data_fitting import prediciton_preprocessing
 from streamlit_option_menu import option_menu
-from tensorflow import keras
 from nn_model import nn_model
-import data_fitting
-
 #laden der trainerten Modelle
 loaded_model_lr = pickle.load(open("models/lr_model.pkl", "rb"))
 loaded_model_lasso = pickle.load(open("models/lasso_model.pkl", "rb"))
@@ -21,8 +17,8 @@ loaded_abr = pickle.load(open("models/abr_model.pkl", "rb"))
 columns = ["reg_year", "runned_miles", "engine_power", "width", "length", "average_mpg", "seat_num", "door_num", "maker", "genmodel", "color", "bodytype", "gearbox", "fuel_type"]
 
 def load_my_model():
-    model = nn_model()  # Erstellen Sie das Modell in der gleichen Weise wie in der ersten Datei.
-    model.build((None, data_fitting.x_train.shape[1]))
+    model = nn_model()  # Erstellen Sie eine Instanz Ihrer Modellklasse.
+    model.build((None, 683))  # Erstellen Sie das Modell mit der gewünschten Eingabeform.
     model.load_weights('model_weights.h5')  # Laden Sie die Gewichte.
     return model
 loaded_model_nn = load_my_model()
