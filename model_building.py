@@ -12,7 +12,7 @@ callback = keras.callbacks.EarlyStopping(monitor='val_mae', patience=10, verbose
 
 history = nn_model.fit(data_fitting.x_train, data_fitting.y_train, epochs=100, validation_split=0.25, callbacks= [callback])
 
-nn_model.evaluate(x_test, y_test)
+#nn_model.evaluate(x_test, y_test)
 
 linear_reg = LinearRegression()
 linear_reg_pca = LinearRegression()
