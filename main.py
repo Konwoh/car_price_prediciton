@@ -5,20 +5,27 @@ import streamlit as st
 #from data_fitting import prediciton_preprocessing
 from streamlit_option_menu import option_menu
 from tensorflow import keras
+from nn_model import nn_model
+import data_fitting
 
 #laden der trainerten Modelle
 loaded_model_lr = pickle.load(open("models/lr_model.pkl", "rb"))
 loaded_model_lasso = pickle.load(open("models/lasso_model.pkl", "rb"))
 loaded_column_transf = pickle.load(open("transformer_models/column_transf.pkl", "rb"))
-loaded_model_nn = keras.models.load_model("models/nn_model.keras")
+#loaded_model_nn = keras.models.load_model("models/nn_model.keras")
 loaded_model_rrf = pickle.load(open("models/rrf.pkl", "rb"))
 loaded_rrf_pca = pickle.load(open("models/rrf_pca_model.pkl", "rb"))
 loaded_pca = pickle.load(open("transformer_models/pca_transformer.pkl", "rb"))
 loaded_gbr = pickle.load(open("models/gbr_model.pkl", "rb"))
 loaded_abr = pickle.load(open("models/abr_model.pkl", "rb"))
 columns = ["reg_year", "runned_miles", "engine_power", "width", "length", "average_mpg", "seat_num", "door_num", "maker", "genmodel", "color", "bodytype", "gearbox", "fuel_type"]
-print(loaded_rrf_pca)
-print(loaded_model_rrf)
+
+def load_my_model():
+    model = nn_model()  # Erstellen Sie das Modell in der gleichen Weise wie in der ersten Datei.
+    model.build((None, data_fitting.x_train.shape[1]))
+    model.load_weights('model_weights.h5')  # Laden Sie die Gewichte.
+    return model
+loaded_model_nn = load_my_model()
 def auto_price_predicition(input_data, model):
     df_test = pd.DataFrame(list(input_data.values())).T
     df_test.columns = columns
@@ -60,7 +67,6 @@ def prediction():
     model_selection = st.selectbox("Which model would you like to predict the price?",
                                    ("Linear Regression", "Lasso Regression", "Random Forest Regressor", "Gradient Boosting Regressor",
                                     "AdaBoost Regressor", "Random Forest Regressor mit PCA", "Neural Network"), key="model_selection")
-    print(input_data)
     if st.button("Show Car Price Result"):
         price_result = auto_price_predicition(input_data, model_selection)
         if model_selection != "Neural Network": 
