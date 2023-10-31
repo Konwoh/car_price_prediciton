@@ -95,6 +95,6 @@ pickle_out__rrf_pca = pickle.dump(rrf_pca, open("models/rrf_pca_model.pkl", "wb"
 pickle_out__rrf_pca = pickle.dump(rrf, open("models/rrf_pca_model.pkl", "wb"))
 pickle_out_gbr = pickle.dump(gbr, open("models/gbr_model.pkl", "wb"))
 pickle_out_abr = pickle.dump(abr, open("models/abr_model.pkl", "wb"))
-nn_model.save_weights('model_weights.h5')
+nn_model.save_weights("models/model_weights.h5")
 
 print("ready model_bulding")

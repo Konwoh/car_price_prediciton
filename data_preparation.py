@@ -42,13 +42,13 @@ def fill_na_from_class(df, attr):
     
     for auto in auto_list:
         if auto in list(df.groupby(by="name")[attr].mean()[df.groupby(by="name")[attr].mean().isna()].index):
-            df[df["name"] == auto] = df[df["name"] == auto].fillna(df[df["maker"] == auto.split(" ")[0]].mean())
+            df[df["name"] == auto] = df[df["name"] == auto].fillna(df[df["maker"] == auto.split(" ")[0]][attr].mean())
             
     missing_value_auto = list(df[df[attr].isna()]["name"].unique())
     
     for auto in auto_list:
         if auto in missing_value_auto:
-            df[df["name"] == auto] = df[df["name"] == auto].fillna(df[df["name"] == auto].mean())
+            df[df["name"] == auto] = df[df["name"] == auto].fillna(df[df["name"] == auto][attr].mean())
             
     return df
 

@@ -4,6 +4,8 @@ import streamlit as st
 #from data_fitting import prediciton_preprocessing
 from streamlit_option_menu import option_menu
 from nn_model import nn_model
+from PIL import Image
+
 #laden der trainerten Modelle
 loaded_model_lr = pickle.load(open("models/lr_model.pkl", "rb"))
 loaded_model_lasso = pickle.load(open("models/lasso_model.pkl", "rb"))
@@ -17,9 +19,9 @@ loaded_abr = pickle.load(open("models/abr_model.pkl", "rb"))
 columns = ["reg_year", "runned_miles", "engine_power", "width", "length", "average_mpg", "seat_num", "door_num", "maker", "genmodel", "color", "bodytype", "gearbox", "fuel_type"]
 
 def load_my_model():
-    model = nn_model()  # Erstellen Sie eine Instanz Ihrer Modellklasse.
-    model.build((None, 683))  # Erstellen Sie das Modell mit der gewünschten Eingabeform.
-    model.load_weights('model_weights.h5')  # Laden Sie die Gewichte.
+    model = nn_model()
+    model.build((None, 683))
+    model.load_weights('models/model_weights.h5')
     return model
 loaded_model_nn = load_my_model()
 def auto_price_predicition(input_data, model):
@@ -125,8 +127,31 @@ https://figshare.com/articles/figure/DVM-CAR_Dataset/19586296/2""")
     - Getriebetyp (Gearbox)
     - Kraftstoffart (Fuel type)
     - Farbe (Color)""")
-        
-        
+        st.subheader("Prozentualer Anteil fehlender Werte")
+        image1 = Image.open('Visualizations/missing_values.png')
+        st.image(image1)
+        st.subheader("Korrelations-Heatmap")
+        image2 = Image.open('Visualizations/Korr_heatmap.png')
+        st.image(image2)
+        st.subheader("Anzahl Autos pro Hersteller")
+        image3 = Image.open('Visualizations/anzahl_autos.png')
+        st.image(image3, width=1200)
+        st.subheader("Verteilungen aller numerischen Datensatz-Attribute")
+        image4 = Image.open('Visualizations/num_verteilung.png')
+        st.image(image4)
+        st.subheader("Verteilungen aller kategorischen Datensatz-Attribute")
+        image5 = Image.open('Visualizations/cat_verteilung.png')
+        st.image(image5)
+        st.subheader("Durchschnittlicher Preis je Hersteller")
+        image6 = Image.open('Visualizations/mean_price.png')
+        st.image(image6, width=900)
+        st.subheader("Durchschnittlicher Preis über Zeit")
+        image7 = Image.open('Visualizations/price_over_time.png')
+        st.image(image7)
+        st.subheader("Scatterplot von Laufleistung und Preis")
+        image8 = Image.open('Visualizations/miles_price_scatter.png')
+        st.image(image8)
+
     if (selected == "Vorhersage des Auto Preis"):
         st.title("Vorhersage des Auto Preis")
         st.text("Bitte geben Sie in die unteren Eingabefelder die Daten ihres Fahrzeuges ein.")
