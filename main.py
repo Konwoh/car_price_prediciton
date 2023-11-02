@@ -82,14 +82,12 @@ def main():
         st.header("Data Science Projekt")
         st.text("Willkommen auf meiner Projekt-Seite, auf der ich mein Data Science-Projekt zur Analyse und Vorhersage des Verkaufspreises von Autos vorstelle.")
         st.subheader("Über das Projekt")
-        st.text("""In diesem Projekt habe ich einen umfangreichen Datensatz von Autos analysiert, um wertvolle Einblicke in die Faktoren zu gewinnen, die den Verkaufspreis von Autos beeinflussen. Das Ziel dieses 
-Projekts war zweigeteilt:
-    1. Deskriptive Analyse: Zuerst habe ich eine umfassende deskriptive Analyse der vorhandenen Daten durchgeführt. Dabei habe ich die wichtigsten Merkmale der Autos untersucht,
-         statistische Trends identifiziert und visuelle Darstellungen erstellt, um die Daten besser zu verstehen.
-    2. Vorhersage des Verkaufspreises: Anschließend habe ich eine maschinelle Lernmodellierung implementiert, um den Verkaufspreis von Autos vorherzusagen. Dabei habe ich verschiedene
+        st.write("""In diesem Projekt habe ich einen umfangreichen Datensatz von Autos analysiert, um wertvolle Einblicke in die Faktoren zu gewinnen, die den Verkaufspreis von Autos beeinflussen. Das Ziel dieses 
+Projekts war zweigeteilt: \n 1. Deskriptive Analyse: Zuerst habe ich eine umfassende deskriptive Analyse der vorhandenen Daten durchgeführt. Dabei habe ich die wichtigsten Merkmale der Autos untersucht,
+         statistische Trends identifiziert und visuelle Darstellungen erstellt, um die Daten besser zu verstehen. \n 2. Vorhersage des Verkaufspreises: Anschließend habe ich eine maschinelle Lernmodellierung implementiert, um den Verkaufspreis von Autos vorherzusagen. Dabei habe ich verschiedene
          Regressionstechniken angewendet und die besten Modelle ausgewählt, um genaue Preisprognosen zu erstellen.""")
         st.subheader("Herausforderungen und Lösungen")
-        st.text("""Während des Projekts stand ich vor verschiedenen Herausforderungen, wie fehlende Daten, Datenbereinigung und die Auswahl der optimalen Merkmale. Ich habe diese Herausforderungen gemeistert,
+        st.write("""Während des Projekts stand ich vor verschiedenen Herausforderungen, wie fehlende Daten, Datenbereinigung und die Auswahl der optimalen Merkmale. Ich habe diese Herausforderungen gemeistert,
 indem ich sorgfältige Datenbereinigung und Feature-Engineering-Techniken angewendet habe.""")
         st.subheader("Verwendete Technologien")
         st.text("""Ich habe verschiedene Technologien und Tools in diesem Projekt eingesetzt, darunter:
@@ -101,7 +99,7 @@ indem ich sorgfältige Datenbereinigung und Feature-Engineering-Techniken angewe
     - Scikit-Learn für maschinelles Lernen
     - Keras und Tensorflow für Nueronale Netze""")
         st.subheader("Ergebnisse und Auswirkungen")
-        st.text("""Durch dieses Projekt konnte ich wertvolle Erkenntnisse über den Automarkt gewinnen und genaue Vorhersagen des Verkaufspreises von Autos ermöglichen. Dies kann für Autohändler und Käufer
+        st.write("""Durch dieses Projekt konnte ich wertvolle Erkenntnisse über den Automarkt gewinnen und genaue Vorhersagen des Verkaufspreises von Autos ermöglichen. Dies kann für Autohändler und Käufer
 gleichermaßen von Nutzen sein, um fundierte Entscheidungen zu treffen.""")
 
         
