@@ -9,18 +9,21 @@ num_cols = df.select_dtypes(["float64", "int64"]).columns #Numerische Attribute 
 cat_cols = df.select_dtypes(["object"]).columns #Kategorische Attribute des Datensatzes
 
 ## Erste Visualisierung
-plt.figure(figsize=(12, 7))
+plt.figure(figsize=(12, 10))
 (df_begin.isna().sum()/df_begin.shape[0]).sort_values(ascending=False).plot(kind="bar")
 plt.title("Prozentualer Anteil an Null-Werten der verschiedenen Attribute des Datensatzes")
 plt.xlabel("Attribute Datensatz")
 plt.ylabel("Prozent")
+plt.tight_layout()
 #plt.show()
 plt.savefig("Visualizations/missing_values.png")
 plt.clf()
 
 ## Zweite Visualisierung
-sns.heatmap(df_begin.select_dtypes(exclude="object").corr(), annot=True, annot_kws={"fontsize":6}, cbar=False)
+plt.figure(figsize=(12, 11))
+sns.heatmap(df_begin.select_dtypes(exclude="object").corr(), annot=True, annot_kws={"fontsize":10}, cbar=False)
 plt.title("Korrelations-Heatmap")
+plt.tight_layout()
 #plt.show()
 plt.savefig("Visualizations/korr_heatmap.png")
 plt.clf()
@@ -28,41 +31,43 @@ plt.clf()
 ## Dritte Visualisierung
 fig3, ((ax1, ax2, ax3), (ax4, ax5, ax6), (ax7, ax8, ax9)) = plt.subplots(3, 3, figsize=(15,10))
 axes = [ax1,ax2,ax3,ax4,ax5,ax6,ax7,ax8,ax9]
-fig3.suptitle('Verteilung aller numerischen Datenwerte')
 for col, ax in zip(num_cols, axes):
     ax.hist(df[col], bins=100)
     ax.set_title(col)
 #plt.show()
+plt.tight_layout()
 plt.savefig("Visualizations/num_verteilung.png")
 plt.clf()
 
 ##Vierte Visualisierung
-fig4, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2,2, figsize=(15,12))
+fig4, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2,2, figsize=(15,13))
 axes2 = [ax1, ax2, ax3, ax4]
 for cat, ax in zip(cat_cols[2:], axes2):
     sns.countplot(data = df,x= cat, ax=ax)
-    ax.tick_params(axis='x', labelrotation=60)
-#plt.show()
+    ax.tick_params(axis='x', labelrotation=90)
+plt.tight_layout()
 plt.savefig("Visualizations/cat_verteilung.png")
 plt.clf()
 
 ##Fünfte Visualisierung
-plt.figure(figsize=(12, 9))
+plt.figure(figsize=(12, 11))
 df.maker.value_counts().plot(kind="bar")
 plt.title("Anzahl Autos pro Hersteller im Datensatz")
 plt.xlabel("Hersteller", fontsize=6)
-plt.ylabel("Anzahl Autos", fontsize=6)
+plt.ylabel("Anzahl Autos")
 #plt.show()
+plt.tight_layout()
 plt.savefig("Visualizations/anzahl_autos.png")
 plt.clf()
 
 ##Sechste Visualisierung      
 mean_maker = df.groupby(by=["maker"])["price"].mean().sort_values(ascending=False)
-plt.figure(figsize=(12, 9))
+plt.figure(figsize=(12, 11))
 (mean_maker[mean_maker < 1000000]).plot(kind="bar")
 plt.title("Durchschnittlicher Preis je Hersteller(Auswahl)")
 plt.xlabel("Hersteller")
 plt.ylabel("Preis")
+plt.tight_layout()
 #plt.show()
 plt.savefig("Visualizations/mean_price.png")
 plt.clf()
@@ -78,6 +83,7 @@ sns.lineplot(x=plot_test_df["reg_year"], y=plot_test_df["price"], hue=plot_test_
 plt.xlabel("Zulassungsjahr")
 plt.ylabel("Preis")
 plt.title("Durchschnittlicher Preis der größten Hersteller über Zeit")
+plt.tight_layout()
 #plt.show()
 plt.savefig("Visualizations/price_over_time.png")
 plt.clf()
@@ -90,5 +96,6 @@ sns.scatterplot(data=filtered, y="price", x="runned_miles", hue="maker")
 plt.title("Verhältnis Laufleistung und Preis der größten Hersteller")
 plt.xlabel("Laufleistung")
 plt.ylabel("Preis")
+plt.tight_layout()
 #plt.show()
 plt.savefig("Visualizations/miles_price_scatter.png")
