@@ -187,7 +187,8 @@ https://figshare.com/articles/figure/DVM-CAR_Dataset/19586296/2""")
                  \n Lasso Regression: 0.5988089083316444 
                  \n Random Forest Regressor: 0.861095177381202 
                  \n Gradient Boosting Regressor 0.8141688072472406 
-                 \n AdaBoost Regressor: 0.61401889818197""")
+                 \n AdaBoost Regressor: 0.61401889818197
+                 \n Neural Network: 0.39645593929069944""")
         st.subheader("Vorhersage")
         prediction()
 
