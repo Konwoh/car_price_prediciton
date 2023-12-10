@@ -80,7 +80,8 @@ def main():
     
     if (selected == "Hauptseite"):
         st.header("Data Science Projekt")
-        st.text("Willkommen auf meiner Projekt-Seite, auf der ich mein Data Science-Projekt zur Analyse und Vorhersage des Verkaufspreises von Autos vorstelle.")
+        st.text("""Willkommen auf meiner Projekt-Seite, auf der ich mein Data Science-Projekt zur Analyse und Vorhersage des Verkaufspreises von Autos vorstelle.
+                Der Code meines Projekts ist auf GitHub unter folgender URL zu finden: https://github.com/Konwoh/car_price_prediciton""")
         st.subheader("Über das Projekt")
         st.write("""In diesem Projekt habe ich einen umfangreichen Datensatz von Autos analysiert, um wertvolle Einblicke in die Faktoren zu gewinnen, die den Verkaufspreis von Autos beeinflussen. Das Ziel dieses 
 Projekts war zweigeteilt: \n 1. Deskriptive Analyse: Zuerst habe ich eine umfassende deskriptive Analyse der vorhandenen Daten durchgeführt. Dabei habe ich die wichtigsten Merkmale der Autos untersucht,
